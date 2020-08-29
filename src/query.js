@@ -37,8 +37,8 @@ function dealwithimage(query){
 
 function dealwithtitle(query){
     if(query.title.english === null)
-    return `${query.title.romaji}`;
-    return `${query.title.english}`;
+    return functions.titleCase(`${query.title.romaji}`);
+    return functions.titleCase(`${query.title.english}`);
 }
 
 function dealwithbutton(query){
@@ -63,7 +63,7 @@ function dealwithnextair(query){
     const relOptions = {largest:3, conjunction:" and ", serialComma:false, units: ['y', 'mo', 'd', 'h', 'm', 's']};
     if(query.nextAiringEpisode.timeUntilAiring !== null && query.format === 'MOVIE')
     return `It will approximately release in ${timeConvert(query.nextAiringEpisode.timeUntilAiring*1000, relOptions)}.`;
-    if(query.nextAiringEpisode.timeUntilAiring !== null && (query.format === 'TV' || query.format === 'OVA' || query.format === 'ONA'))
+    if(query.nextAiringEpisode.timeUntilAiring !== null && (query.format === 'TV' || query.format === 'OVA' || query.format === 'ONA' || query.format === 'TV_SHORT' || query.format === 'SPECIAL'))
     return `Episode ${query.nextAiringEpisode.episode} will air in ${timeConvert(query.nextAiringEpisode.timeUntilAiring*1000, relOptions)}.`;
 }
 
@@ -87,6 +87,8 @@ function dealwithlength(query){
     return `The length of the film is ${timeConvert(query.duration*60000, durOptions)}.`;
     if(query.format === `MUSIC`)
     return `The length of the music video is ${timeConvert(query.duration*60000, durOptions)}.`;
+    if(query.format === 'TV_SHORT' || query.format === 'SPECIAL')
+    return `Each episode is ${timeConvert(query.duration*60000, durOptions)} long.`;
 }
 
 function dealwithstudio(query){
@@ -95,7 +97,7 @@ function dealwithstudio(query){
     var studio = `, and it's animation studio is `, studio_r;
     for(i=0; i<query.studios.length; i++){
         if(query.studios[i].isAnimationStudio){
-           studio_r = query.studios[i].name;
+           studio_r = functions.titleCase(query.studios[i].name);
            break;
         }
     }
@@ -170,6 +172,26 @@ function dealwithquery(query) {
 
             else if(query.status === 'CANCELLED'){
                 return `${title} is an Anime that has been cancelled. ${last}\n Thank you for using Anime Search!`;
+            }
+            break;
+        
+        case 'TV_SHORT':
+        case 'SPECIAL':
+            if(query.status === 'RELEASING'){
+                return `${title} started airing on ${startDate.toLocaleDateString('en-US')}${studio}. ${length} ${next} ${score} ${tags} ${last}`;
+            }
+            
+            else if(query.status === 'FINISHED'){
+                var endDate = new Date(query.endDate.year, query.endDate.month-1, query.endDate.day);
+                return `${title} started airing on ${startDate.toLocaleDateString('en-US')}, finished airing on ${endDate.toLocaleDateString('en-US')} with a total of ${query.episodes} episode(s)${studio}. ${length} ${score} ${tags} ${last}`;
+            }
+            
+            else if(query.status === 'NOT_YET_RELEASED'){
+                return `${date}${studio}. ${next} ${tags} ${last}`;
+            }
+            
+            else if(query.status === 'CANCELLED'){
+                return `${title} is an Anime that has been cancelled. ${last}\n Thank you for using Anime Search!`;  
             }
             break;
             

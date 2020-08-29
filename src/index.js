@@ -28,7 +28,7 @@ app.intent('search_anime', async (conv, params) => {
   const id_array = [];
   const search_result = [];
   if (data.media.length >= 1) {
-    if (data.media.length == 1)
+    if (data.media.length === 1)
       conv.data.exactMatch = true;
       if(!conv.data.exactMatch)
      for(i=0; i<data.media.length; i++){
@@ -47,6 +47,7 @@ app.intent('search_anime', async (conv, params) => {
         if(!query.isAdult)
         search_result.push(query);
       }
+      if(search_result.length > 1){
       let carouselItems = {};
       let idtokeymap = {};
       search_result.forEach(animu => {
@@ -71,6 +72,25 @@ app.intent('search_anime', async (conv, params) => {
         title: `Anime Search Result`,
         items: carouselItems,
       }));
+      }
+      else if(search_result.length === 1) {
+          const query = search_result[0];
+          const title = queries.dealwithtitle(query);
+        conv.close(queries.dealwithquery(query), new BasicCard({
+        text: queries.dealwithdescription(query),
+        subtitle: queries.dealwithgenres(query),
+        title: title,
+        buttons: new Button(queries.dealwithbutton(query)),
+        image: new Image({
+          url: queries.dealwithimage(query),
+          alt: `Cover image of ${title}.`,
+        }),
+      }));
+      }
+      else {
+            conv.ask(`No result found! Please speak clearly or try an alternative name. Would you like to search for it again?`, new Suggestions('Yes','No'));
+            conv.data.var = true;
+      }
     }
     else if (conv.data.exactMatch) {
       const query = await Anilist.media.anime(data.media[0].id);
