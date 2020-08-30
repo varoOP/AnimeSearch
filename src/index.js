@@ -17,7 +17,7 @@ const deal = require('./functions');
 const queries = require('./query');
 const SimpleNodeLogger = require('simple-node-logger'),
     opts = {
-        logFilePath:'../logs/logs.log',
+        logFilePath:'/path/to/logfile',
         timestampFormat:'YYYY-MM-DD HH:mm:ss.SSS'
     },
 log = SimpleNodeLogger.createSimpleLogger( opts );
