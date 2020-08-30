@@ -1,18 +1,16 @@
 {
-  "name": "animesearchFulfillment",
-  "description": "Fulfillment for dialogflow agent.",
-  "version": "0.0.1",
+  "name": "AnimeSearchFulfillment",
+  "description": "Webhook for Anime Search",
+  "version": "0.2.0",
   "private": true,
   "author": "varoOP",
   "engines": {
     "node": "12"
   },
   "dependencies": {
-    "actions-on-google": "^2.2.0",
+    "actions-on-google": "^2.13.0",
+    "anilist-node": ">=1.4.1",
     "express": "^4.16.4",
-    "dialogflow": "^0.6.0",
-    "dialogflow-fulfillment": "^0.5.0",
-    "anilist-node": "^1.2.3",
     "humanize-duration": "^3.23.0"
   }
 }

@@ -12,7 +12,7 @@ const {
 } = require('actions-on-google');
 
 const app = dialogflow();
-const functions = require('./functions');
+const deal = require('./functions');
 const queries = require('./query');
 
 app.intent('Welcome', conv => {
@@ -22,7 +22,7 @@ app.intent('Welcome', conv => {
 
 app.intent('search_anime', async (conv, params) => {
   const anime = params.anime;
-  var searchfor = functions.titleCase(anime.trim());
+  var searchfor = deal.titleCase(anime.trim());
   console.log(`IMPORTANT : ` + searchfor)
   const data = await Anilist.search(`anime`, `${searchfor}`, 1, 10);
   const id_array = [];
@@ -32,9 +32,9 @@ app.intent('search_anime', async (conv, params) => {
       conv.data.exactMatch = true;
       if(!conv.data.exactMatch)
      for(i=0; i<data.media.length; i++){
-         if(queries.dealwithtitle(data.media[i]).toLowerCase() == searchfor.toLowerCase()){
+         if(deal.dealwithtitle(data.media[i]).toLowerCase() == searchfor.toLowerCase()){
          conv.data.exactMatch = true;
-         console.log(`Exact matched: `+queries.dealwithtitle(data.media[i]).toLowerCase());
+         console.log(`Exact matched: `+deal.dealwithtitle(data.media[i]).toLowerCase());
          }
      }
     if (!conv.data.exactMatch) {
@@ -52,10 +52,10 @@ app.intent('search_anime', async (conv, params) => {
       let idtokeymap = {};
       search_result.forEach(animu => {
         let itemdetails = {
-          title: `${queries.dealwithtitle(animu)}`,
+          title: `${deal.dealwithtitle(animu)}`,
           image: new Image({
             url: animu.coverImage.large,
-            alt: `Cover image of ${queries.dealwithtitle(animu)}.`,
+            alt: `Cover image of ${deal.dealwithtitle(animu)}.`,
           }),
         };
         let map = {
@@ -68,21 +68,22 @@ app.intent('search_anime', async (conv, params) => {
       conv.data.store = idtokeymap;
       console.log(idtokeymap);
       conv.data.num = carouselItems;
-      conv.ask(`Maybe, your anime is one of these?`, new Carousel({
+      conv.ask(`Maybe, your anime is one of these? Please choose one by tapping on it or by calling out it's name.`, new Carousel({
         title: `Anime Search Result`,
         items: carouselItems,
       }));
+      conv.data.var = false;
       }
       else if(search_result.length === 1) {
           const query = search_result[0];
-          const title = queries.dealwithtitle(query);
+          const title = deal.dealwithtitle(query);
         conv.close(queries.dealwithquery(query), new BasicCard({
-        text: queries.dealwithdescription(query),
-        subtitle: queries.dealwithgenres(query),
+        text: deal.dealwithdescription(query),
+        subtitle: deal.dealwithgenres(query),
         title: title,
-        buttons: new Button(queries.dealwithbutton(query)),
+        buttons: new Button(deal.dealwithbutton(query)),
         image: new Image({
-          url: queries.dealwithimage(query),
+          url: deal.dealwithimage(query),
           alt: `Cover image of ${title}.`,
         }),
       }));
@@ -94,15 +95,15 @@ app.intent('search_anime', async (conv, params) => {
     }
     else if (conv.data.exactMatch) {
       const query = await Anilist.media.anime(data.media[0].id);
-      const title = queries.dealwithtitle(query);
+      const title = deal.dealwithtitle(query);
       if(!query.isAdult)
       conv.close(queries.dealwithquery(query), new BasicCard({
-        text: queries.dealwithdescription(query),
-        subtitle: queries.dealwithgenres(query),
+        text: deal.dealwithdescription(query),
+        subtitle: deal.dealwithgenres(query),
         title: title,
-        buttons: new Button(queries.dealwithbutton(query)),
+        buttons: new Button(deal.dealwithbutton(query)),
         image: new Image({
-          url: queries.dealwithimage(query),
+          url: deal.dealwithimage(query),
           alt: `Cover image of ${title}.`,
         }),
       }));
@@ -123,14 +124,14 @@ app.intent('handle_carousel', async (conv, params, option) => {
   const idkeymap = conv.data.store;
   const ani_id = idkeymap[key].ani_id;
   const query = await Anilist.media.anime(ani_id);
-  const title = queries.dealwithtitle(query);
+  const title = deal.dealwithtitle(query);
   conv.close(queries.dealwithquery(query), new BasicCard({
-    text: queries.dealwithdescription(query),
-    subtitle: queries.dealwithgenres(query),
+    text: deal.dealwithdescription(query),
+    subtitle: deal.dealwithgenres(query),
     title: title,
-    buttons: new Button(queries.dealwithbutton(query)),
+    buttons: new Button(deal.dealwithbutton(query)),
     image: new Image({
-      url: queries.dealwithimage(query),
+      url: deal.dealwithimage(query),
       alt: `Cover image of ${title}.`,
     }),
   }));
@@ -142,7 +143,7 @@ app.intent('search_anime - yes', async (conv) => {
 
 app.intent('fallback', async (conv) => {
     if(!conv.data.var){
-   conv.ask(`Please select one option by tapping on it.`);
+   conv.ask(`Please select one option by tapping on it or calling out it's name.`);
    conv.ask(`Maybe, your anime is one of these?`, new Carousel({
         title: `Anime Search Result`,
         items: conv.data.num,
