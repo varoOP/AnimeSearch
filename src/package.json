@@ -1,5 +1,5 @@
 {
-  "name": "AnimeSearchFulfillment",
+  "name": "animesearch",
   "description": "Webhook for Anime Search",
   "version": "0.2.0",
   "private": true,
