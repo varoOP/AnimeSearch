@@ -11,6 +11,7 @@
     "actions-on-google": "^2.13.0",
     "anilist-node": ">=1.4.1",
     "express": "^4.16.4",
-    "humanize-duration": "^3.23.0"
+    "humanize-duration": "^3.23.0",
+    "simple-node-logger": ">=18.12.24"
   }
 }

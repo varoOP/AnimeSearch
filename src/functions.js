@@ -1,3 +1,4 @@
+'use strict';
 const timeConvert = require(`humanize-duration`);
 
 function titleCase(str) {
@@ -14,13 +15,13 @@ module.exports = {
             return ``;
         var tags = `Some spoiler free tags of it include`;
         var tagcount = 0;
-        for (i = 0; i < query.tags.length; i++) {
+        for (let i = 0; i < query.tags.length; i++) {
             if (query.tags[i].isMediaSpoiler === false && tagcount < 3) {
                 tags += `, ${query.tags[i].name}`;
                 tagcount++;
             }
         }
-        replacement = ' and';
+        var replacement = ' and';
         if (tagcount > 1)
             tags = tags.replace(/,([^,]*)$/, replacement + '$1' + `.`);
         if (tagcount <= 1)
@@ -32,7 +33,7 @@ module.exports = {
         if (query.genres === undefined || query.genres.length === 0)
             return ``;
         var genres = `Genres: `;
-        for (i = 0; i < query.genres.length; i++) {
+        for (let i = 0; i < query.genres.length; i++) {
             genres += `${query.genres[i]}, `;
         }
         return genres.replace(/,([^,]*)$/, '.' + '$1');
@@ -104,7 +105,7 @@ module.exports = {
         if (query.studios.length === 0)
             return ``;
         var studio = `, and it's animation studio is `, studio_r;
-        for (i = 0; i < query.studios.length; i++) {
+        for (let i = 0; i < query.studios.length; i++) {
             if (query.studios[i].isAnimationStudio) {
                 studio_r = titleCase(query.studios[i].name);
                 break;
@@ -117,10 +118,10 @@ module.exports = {
     },
 
     dealwithdate: function (query, title) {
+        var startDate;
         if (query.startDate.year === null) {
             return `${title} has not released yet`;
         }
-
         else if (query.startDate.month === null && query.startDate.day === null) {
             return `${title} is slated to release in ${query.startDate.year}`;
         }

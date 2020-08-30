@@ -1,4 +1,6 @@
+'use strict';
 const deal = require(`./functions`);
+
 module.exports = {
     dealwithquery: function (query) {
         var title = deal.dealwithtitle(query);
@@ -81,7 +83,6 @@ module.exports = {
                     return `${title} is a music video that has been cancelled. ${last} Thank you for using Anime Search!`;
                 }
                 else return `${title} is a music video. ${tags} ${score} ${last}`;
-                break;
 
             default: return `${title} is of the ${query.format.toLowerCase()} format. ${tags} ${last} Thank you for using Anime Search!`;
         }

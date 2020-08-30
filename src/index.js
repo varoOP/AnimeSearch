@@ -1,3 +1,4 @@
+'use strict';
 const express = require('express');
 const bodyParser = require('body-parser');
 const anilist = require('anilist-node');
@@ -14,6 +15,12 @@ const {
 const app = dialogflow();
 const deal = require('./functions');
 const queries = require('./query');
+const SimpleNodeLogger = require('simple-node-logger'),
+    opts = {
+        logFilePath:'../logs/logs.log',
+        timestampFormat:'YYYY-MM-DD HH:mm:ss.SSS'
+    },
+log = SimpleNodeLogger.createSimpleLogger( opts );
 
 app.intent('Welcome', conv => {
   conv.ask(`Which anime would you like to search for?`);
@@ -23,7 +30,7 @@ app.intent('Welcome', conv => {
 app.intent('search_anime', async (conv, params) => {
   const anime = params.anime;
   var searchfor = deal.titleCase(anime.trim());
-  console.log(`IMPORTANT : ` + searchfor)
+  log.info(`Search Query: ` + searchfor)
   const data = await Anilist.search(`anime`, `${searchfor}`, 1, 10);
   const id_array = [];
   const search_result = [];
@@ -31,7 +38,7 @@ app.intent('search_anime', async (conv, params) => {
     if (data.media.length === 1)
       conv.data.exactMatch = true;
     if (!conv.data.exactMatch)
-      for (i = 0; i < data.media.length; i++) {
+      for (let i = 0; i < data.media.length; i++) {
         if (deal.dealwithtitle(data.media[i]).toLowerCase() == searchfor.toLowerCase()) {
           conv.data.exactMatch = true;
           console.log(`Exact matched: ` + deal.dealwithtitle(data.media[i]).toLowerCase());
@@ -66,7 +73,7 @@ app.intent('search_anime', async (conv, params) => {
           idtokeymap[animu.sortthis] = map;
         });
         conv.data.store = idtokeymap;
-        console.log(idtokeymap);
+        log.info(idtokeymap);
         conv.data.num = carouselItems;
         conv.ask(`Maybe, your anime is one of these? Please choose one by tapping on it or by calling out it's name.`, new Carousel({
           title: `Anime Search Result`,
