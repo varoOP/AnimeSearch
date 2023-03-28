@@ -8,7 +8,7 @@
     "node": "12"
   },
   "dependencies": {
-    "actions-on-google": "^2.13.0",
+    "actions-on-google": "^3.0.0",
     "anilist-node": ">=1.4.1",
     "express": "^4.18.2",
     "humanize-duration": "^3.23.0",
